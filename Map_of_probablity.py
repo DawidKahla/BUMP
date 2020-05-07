@@ -21,3 +21,18 @@ PathLength = 15000  #maksymalna liczba punktow w pojedynczej drodze
 # do wyswietlania kolorowego
 DisplayForce = "N"  # przyciaganie(attraction) "A"; odpychanie(repulsion) "R"; wypadkowa(net) "N"
 
+##### Funkcje #####
+
+Accuracy = int(np.log10(1 / delta))  # do funkcji ReturnRounded
+
+
+def ReturnRounded(SingleCoord):
+    return round(SingleCoord, Accuracy) #zaokrągla koordy na podstawie delty
+
+
+def RandomCoordinate():
+    return ReturnRounded(np.random.uniform(-x_size, x_size)) #generuje odpowiednio zokrąglony losowy koord
+
+
+def CalculateDistance(q1, q2):
+    return np.sqrt((q1[0] - q2[0]) ** 2 + (q1[1] - q2[1]) ** 2) #liczy dystans między dwoma punktami na płaszczyźnie
