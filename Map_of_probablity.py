@@ -200,3 +200,26 @@ def RandomPoint(Path):
     RawPoint = KeepWithinScene(RawPoint)
     RoundedNextPoint = (ReturnRounded(RawPoint[0]), ReturnRounded(RawPoint[1]))
     return RoundedNextPoint
+
+def CreatePath(start_point, finish_point, obst_vect):
+    #zwraca liste punktow pojedynczej drogi w postaci krotki (tuple)
+    Path = []
+    Path.append(start_point)
+    i = 0 #liczba iteracji do sprawdzania maksymalnej dlugości pojedynczej drogi
+
+    Path.append(CalculateNextPoint(Path, finish_point, obst_vect))
+
+    while (Path[-1] != finish_point):
+        NextPoint = CalculateNextPoint(Path, finish_point, obst_vect)
+
+        if NextPoint == Path[-2]:                                        #jeśli robot przechodzi pomiedzy dwoma punktami, to wykonaj ruch w losowym kierunku
+            RP = RandomPoint(Path)
+            Path.append(RP)
+        else:
+            Path.append(NextPoint)
+
+        i += 1
+        if i > PathLength:                                               # osiagnieto maksymalna dlugosc pojedynczej drogi
+            print("Nie osiągnięto mety w %s iteracjach" % PathLength)
+            return Path
+    return Path
