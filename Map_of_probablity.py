@@ -223,3 +223,46 @@ def CreatePath(start_point, finish_point, obst_vect):
             print("Nie osiągnięto mety w %s iteracjach" % PathLength)
             return Path
     return Path
+
+##### main #####
+
+x = y = np.arange(-x_size, x_size, delta)
+X, Y = np.meshgrid(x, y)
+
+finish_point = (x_size, RandomCoordinate())                                 #losowanie mety
+
+obst_vect = []                                                              #przeszkody inicjujemy jako pusta lista
+for i in range(0, NoOfObstacles):                                           #generujemy losowe przeszkody w zadanej ilosci
+    obst_vect.append((RandomCoordinate(), RandomCoordinate()))
+
+# Z - macierz wpływów sił na robota
+Z = np.zeros(X.shape)                                                       #inicjujemy wyzerowaną macierz o zadanym rozmiarze
+for i in range(0, Z.shape[0]):
+    for j in range(0, Z.shape[1]):
+        q = (x[i], y[j])                                                    #przechodzimy po wszystkich punktach
+        Z[j, i] = ForcesInAPoint(DisplayForce, q, finish_point, obst_vect)  #w kazdym licząc siły
+
+
+fig = plt.figure(figsize=(x_size, y_size))
+ax = fig.add_subplot(111)
+ax.set_title('Mapa prawdopodobieństwa')
+#plt.imshow(Z, cmap=cm.YlOrBr,
+         # origin='lower', extent=[-x_size, x_size, -y_size, y_size]) #ta opcja służy ewentualnemu nadaniu mapie kolorów związanych z siłami w każdym punkcie
+
+plt.plot(finish_point[0], finish_point[1], "or", color='green')       #wyświetlanie mety
+
+for obstacle in obst_vect:
+    plt.plot(obstacle[0], obstacle[1], "or", color='black')           #wyświetlanie przeszkód
+
+for i in range(0, iterations):
+    start_point = (RandomCoordinate(), RandomCoordinate())            #losowanie początkowego punktu
+    print((i+1)/iterations*100, '%')                                                   #wyswietlanie aktualnego % wykonania zadania
+    RobotsPath = CreatePath(start_point, finish_point, obst_vect)     #wyznaczenie ścieżki od zadanego punktu
+    for PathPoint in RobotsPath:
+
+        plt.plot(PathPoint[0], PathPoint[1], ",",  color='black')     #wyświetlanie na wykresie, "," określa, że punkty będą wielkości 1 piksela
+
+#plt.colorbar(orientation='vertical')                                 #kolory
+
+plt.grid(True)
+plt.show()
