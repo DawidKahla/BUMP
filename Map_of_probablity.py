@@ -121,3 +121,82 @@ def ValueInRange(Min, Value, Max):
         return True
     else:
         return False
+
+def AssingCell(ResultantForce):
+    ForceAngle = np.arctan2(ResultantForce[1], ResultantForce[0])
+    ForceAngle = ForceAngle / np.pi  # dla uproszczenia
+    if ValueInRange(-1 / 8, ForceAngle, 1 / 8):
+        return (delta, 0)  # prawo
+    elif ValueInRange(1 / 8, ForceAngle, 3 / 8):
+        return (delta, delta)  # prawo góra
+    elif ValueInRange(3 / 8, ForceAngle, 5 / 8):
+        return (0, delta)  # góra
+    elif ValueInRange(5 / 8, ForceAngle, 7 / 8):
+        return (-delta, delta)  # lewa góra
+    elif ValueInRange(7 / 8, ForceAngle, 1) or ValueInRange(-1, ForceAngle, -7 / 8):  # wyjątek
+        return (-delta, 0)  # lewo
+    elif ValueInRange(-7 / 8, ForceAngle, -5 / 8):
+        return (-delta, -delta)  # lewy dół
+    elif ValueInRange(-5 / 8, ForceAngle, -3 / 8):
+        return (0, -delta)  # dół
+    elif ValueInRange(-3 / 8, ForceAngle, -1 / 8):
+        return (delta, -delta)  # prawy dół
+
+
+def WhichCellNext(q, ObstVector, finish_point):
+
+    SingleVectorsCoords = []
+
+    SingleVectorsCoords.append(ForceVectorComponents(q, finish_point, False))
+
+    for Obst in ObstVector:
+        SingleVectorsCoords.append(ForceVectorComponents(q, Obst, True))
+
+    F_res = ResultantForceComponents(SingleVectorsCoords)
+
+    Direction = AssingCell(F_res)
+    return Direction
+
+
+def KeepWithinBorder(coord, sign, border):
+    #utrzymuje robota przed określoną granicą
+    if sign == "<":
+        if coord < border:
+            return coord
+        else:
+            return border
+    elif sign == ">":
+        if coord > border:
+            return coord
+        else:
+            return border
+    else:
+        raise ValueError("Incorrect sign. Use: \"<\", \">\"")
+
+
+def KeepWithinScene(SuggestedPoint):
+    #utrzymuje robota w scenie
+    SuggestedPoint[0] = KeepWithinBorder(SuggestedPoint[0], "<", x_size)
+    SuggestedPoint[0] = KeepWithinBorder(SuggestedPoint[0], ">", -x_size)
+    SuggestedPoint[1] = KeepWithinBorder(SuggestedPoint[1], "<", y_size)
+    SuggestedPoint[1] = KeepWithinBorder(SuggestedPoint[1], ">", -y_size)
+
+    return SuggestedPoint
+
+
+def CalculateNextPoint(Path, finish_point, obst_vect):
+
+    Direction = WhichCellNext(Path[-1], obst_vect, finish_point)
+    RawPoint = list(map(lambda x, y: x + y, Path[-1], Direction))
+    RawPoint = KeepWithinScene(RawPoint)
+    RoundedNextPoint = (ReturnRounded(RawPoint[0]), ReturnRounded(RawPoint[1]))
+    return RoundedNextPoint
+
+def RandomPoint(Path):
+    Rand_X = np.random.choice([-delta, 0, delta])
+    Rand_Y = np.random.choice([-delta, 0, delta])
+    Direction = (Rand_X, Rand_Y)
+    RawPoint = list(map(lambda x, y: x + y, Path[-1], Direction))
+    RawPoint = KeepWithinScene(RawPoint)
+    RoundedNextPoint = (ReturnRounded(RawPoint[0]), ReturnRounded(RawPoint[1]))
+    return RoundedNextPoint
