@@ -226,8 +226,8 @@ def CreatePath(start_point, finish_point, obst_vect):
 
 ##### main #####
 
-x = y = np.arange(-x_size, x_size, delta)
-X, Y = np.meshgrid(x, y)
+# x = y = np.arange(-x_size, x_size, delta)
+# X, Y = np.meshgrid(x, y)
 
 finish_point = (x_size, RandomCoordinate())                                 #losowanie mety
 
@@ -236,11 +236,11 @@ for i in range(0, NoOfObstacles):                                           #gen
     obst_vect.append((RandomCoordinate(), RandomCoordinate()))
 
 # Z - macierz wpływów sił na robota
-Z = np.zeros(X.shape)                                                       #inicjujemy wyzerowaną macierz o zadanym rozmiarze
-for i in range(0, Z.shape[0]):
-    for j in range(0, Z.shape[1]):
-        q = (x[i], y[j])                                                    #przechodzimy po wszystkich punktach
-        Z[j, i] = ForcesInAPoint(DisplayForce, q, finish_point, obst_vect)  #w kazdym licząc siły
+# Z = np.zeros(X.shape)                                                       #inicjujemy wyzerowaną macierz o zadanym rozmiarze
+# for i in range(0, Z.shape[0]):
+#     for j in range(0, Z.shape[1]):
+#         q = (x[i], y[j])                                                    #przechodzimy po wszystkich punktach
+#         Z[j, i] = ForcesInAPoint(DisplayForce, q, finish_point, obst_vect)  #w kazdym licząc siły
 
 
 fig = plt.figure(figsize=(x_size, y_size))
