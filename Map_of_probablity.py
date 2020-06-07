@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 
 ##### Zmienne globalne #####
 
-a = 1 #wspolczynnik kierunkowy sciezki
+a = 2 #wspolczynnik kierunkowy sciezki
 b = 10 #wyraz wolny
 
 x_size = 10
@@ -29,7 +29,7 @@ y_end=b+y_size
 x_start=0
 x_end=x_size
 
-delta = 0.01        #najmniejsza dopuszczalna odległość między punktami
+delta = 0.001        #najmniejsza dopuszczalna odległość między punktami
 
 NoOfObstacles = 4   #liczba przeszkód okrągłych
 
@@ -184,8 +184,8 @@ ax = fig.add_subplot(111)
 ax.set_title('Mapa prawdopodobieństwa')
 
 #opcjonalne wyswietlanie środków przeszkód okraglych
-for obstacle in obst_vect:
-    plt.plot(obstacle[0], obstacle[1], "or", color='black')
+#for obstacle in obst_vect:
+    #plt.plot(obstacle[0], obstacle[1], "or", color='black')
 
 #i = 0
 #wyswietlanie wygenerowanych punktów, z opcjonalnym wypisywaniem postępu, przydatne przy wiekszych ilościach punktow
