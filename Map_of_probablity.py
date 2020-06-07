@@ -70,10 +70,10 @@ def ValueInRange(Min, Value, Max):
 def RandomObscaleCirc():
     #tworzy losową przeszkodę znajdującą się w całości na scenie i nie znajdującą się na scenie
     Obs_x=RandomCoordinate_x()
-    if Obs_x+*d_0 >= x_end:
-        Obs_x -= *d_0
-    if Obs_x-*d_0 <= x_start:
-        Obs_x += *d_0
+    if Obs_x+d_0 >= x_end:
+        Obs_x -= d_0
+    if Obs_x-d_0 <= x_start:
+        Obs_x += d_0
     Obs_y = RandomCoordinate_y()
     i = 0
     while (Obs_y < (a * Obs_x + b + r_path + d_0)) and (Obs_y > (a * Obs_x + b - r_path - d_0)):
