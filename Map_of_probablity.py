@@ -1,6 +1,33 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+##### Zmienne globalne #####
+
+a = 1 #wspolczynnik kierunkowy sciezki
+b = 10 #wyraz wolny
+
+x_size = 10
+y_size = a*x_size    #rozmiar sceny
+if y_size < 2:
+    y_size=2
+
+y_start=b
+y_end=b+y_size
+x_start=0
+x_end=x_size
+
+delta = 0.01        #najmniejsza dopuszczalna odległość między punktami
+
+NoOfObstacles = 4   #liczba przeszkód okrągłych
+
+d_0 = 1  # promien przeszkod okraglych
+r_path = 1 # połowa szerokości ścieżki
+
+probability_of_path = 0.8
+
+point_iters = 100
+iterations = 20000 #liczba generowanych pojedynczych punktow
+
 ##### Funkcje #####
 
 Accuracy = int(np.log10(1 / delta))  # do funkcji ReturnRounded
@@ -26,3 +53,97 @@ def ValueInRange(Min, Value, Max):
         return True
     else:
         return False
+    
+def RandomObscaleCirc():
+    #tworzy losową przeszkodę znajdującą się w całości na scenie i nie znajdującą się na scenie
+    Obs_x=RandomCoordinate_x()
+    if Obs_x+*d_0 >= x_end:
+        Obs_x -= *d_0
+    if Obs_x-*d_0 <= x_start:
+        Obs_x += *d_0
+    Obs_y = RandomCoordinate_y()
+    i = 0
+    while (Obs_y < (a * Obs_x + b + r_path + d_0)) and (Obs_y > (a * Obs_x + b - r_path - d_0)):
+        Obs_y = RandomCoordinate_y()
+        i += 1
+        if i > point_iters:     #na wszelki wypadek przerywa nieskończoną pętle
+            print("Nie udało się wylosować przeszkody w %s iteracjach" % point_iters)
+            return (Obs_x, Obs_y)
+    return (Obs_x, Obs_y)
+
+def IsInObscaleCirc(q, q_i):
+    #funkcja sprawdzająca czy punkt jest w pojedynczej przeszkodzie okrągłej
+    d_i = CalculateDistance(q, q_i)
+    if (d_i <= d_0):
+        return True
+    else:
+        return False
+
+def IsInObscaleRect(q, q_i):
+    #funkcja sprawdzająca czy punkt jest w pojedynczej przeszkodzie prostokątnej
+    if (ValueInRange(q_i[0],q[0],q_i[2]) and ValueInRange(q_i[1],q[1],q_i[3])):
+        return True
+    else:
+        return False
+
+def IsInObscales(q, VectorCirc, VectorRect):
+    #funkcja sprawdzająca czy punkt jest w jakiejkolwiek przeszkodzie
+    for q_i in VectorCirc:
+        if (IsInObscaleCirc(q, q_i)):
+            return True
+    for q_i in VectorRect:
+        if(IsInObscaleRect(q, q_i)):
+            return True
+    return False
+
+def MakePath():
+    #funkcja tworząca prostą wokół której jest budowana ścieżka, istotna przy ewentualnym debuggingu
+    Path = []
+    i=x_start
+    while(i<x_end):
+        Path.append(CalculatePathsPoints(i))
+        i+=delta
+    return Path
+
+def MakePointInPath():
+    #funckja zwraca punkt na sciezce
+    x_point = RandomCoordinate_x()
+    delta_point = ReturnRounded(np.random.uniform(-r_path, r_path))
+    y_point = a * x_point + b + delta_point
+    if (y_point>=y_end or y_point<y_start):
+        return MakePointInPath()
+    return (x_point, y_point)
+
+def MakePointInObscale(ObstVector, VectorRect):
+    #funkcja tworzy punkt wewnatrz przeszkody
+    point = (RandomCoordinate_x(), RandomCoordinate_y())
+    i = 0
+    while(IsInObscales(point, ObstVector, VectorRect) == False):
+        point = (RandomCoordinate_x(), RandomCoordinate_y())
+        i += 1
+        if i>point_iters:
+            print("Nie udało się wylosować punktu w %s iteracjach" % point_iters)
+            return point
+    return point
+
+def MakePointOutOfObscale(ObstVector, VectorRect):
+    #funkcja tworzaca punkt poza przeszkoda
+    point = (RandomCoordinate_x(), RandomCoordinate_y())
+    i = 0
+    while (IsInObscales(point, ObstVector, VectorRect) == True):
+        point = (RandomCoordinate_x(), RandomCoordinate_y())
+        i += 1
+        if i > point_iters:
+            print("Nie udało się wylosować punktu poza przeszkodą w %s iteracjach" % point_iters)
+            return point
+    return point
+
+def MakePointByProbability(ObstVector, VectorRect):
+    #funkcja generujaca punkt w zadanym miejscu zaleznie od zadanego prawdopodobienstwa
+    prob = ReturnRounded(np.random.uniform(0, 1))
+    if prob == 1:
+        return MakePointInObscale(ObstVector, VectorRect)
+    if prob <= probability_of_path:
+        return MakePointInPath()
+    else:
+        return MakePointOutOfObscale(ObstVector, VectorRect)
