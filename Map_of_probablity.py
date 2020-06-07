@@ -147,3 +147,40 @@ def MakePointByProbability(ObstVector, VectorRect):
         return MakePointInPath()
     else:
         return MakePointOutOfObscale(ObstVector, VectorRect)
+
+##### main #####
+
+# tworzenie przeszkod
+#okraglych
+obst_vect = []
+for i in range(0, NoOfObstacles):
+    obst_vect.append(RandomObscaleCirc())
+
+#prostokatnych
+rect_vect = []
+#rect_vect.append((0, 15, 3, 20))
+
+#generowanie punktow
+point_vect= []
+for i in range(0, iterations):
+    point_vect.append(MakePointByProbability(obst_vect, rect_vect))
+
+#tworzenie wykresu
+fig = plt.figure(figsize=(x_size, y_size))
+ax = fig.add_subplot(111)
+ax.set_title('Mapa prawdopodobieństwa')
+
+#opcjonalne wyswietlanie środków przeszkód okraglych
+for obstacle in obst_vect:
+    plt.plot(obstacle[0], obstacle[1], "or", color='black')
+
+#i = 0
+#wyswietlanie wygenerowanych punktów, z opcjonalnym wypisywaniem postępu, przydatne przy wiekszych ilościach punktow
+for point in point_vect:
+    #print((i + 1) / iterations * 100, '%')
+    #i+=1
+    plt.plot(point[0], point[1], ",", color='black')
+
+
+plt.grid(True)
+plt.show()
