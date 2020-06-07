@@ -1,6 +1,19 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+##### Opis abstrakcji programu #####
+
+# przeszkoda okrągła - punkt: o[0] - wspolrzedna horyzontalna, o[1] - wspolrzedna wertykalna, z zadanym na stale promieniem d_0
+# przeszkoda prostokątna - traktowana jako ograniczony fragment przestrzeni; wektor: p[0] - ograniczenie z lewej, p[1] - ograniczenie dolne, p[2] - ograniczenie z góry, p[3] - ograniczenie z prawej
+# ścieżka - obszar oddalony od prostej zadanej równaniem, y=ax+b, o mniej niż r_path
+# punkty - losowane z zadanym prawdopodobieństwem na ścieżce (probability_of_path), prawdopodobieństwo pojawienia się w przeszkodzie (delta), pozostałe punkty rozkładają się na ścieżke i pozostały obszar, delta określa również minimalną odległość między punktami, iterations ilość losowanych punktów
+
+# Działanie skryptu:
+# implementacja zakłada wyznaczenie ścieżki na podstawie zadanego wspolczynnika kierunkowego i wyrazu wolnego
+# przeszkody okrągłe można wprowadzać ręcznie lub generować losowo na podstawie ich liczby zadawanej w zmiennych globalnych
+# przeszkody prostokątne można wprowadzać ręcznie
+# punkty generowane są losowo na podstawie list przeszkód oraz ścieżki
+
 ##### Zmienne globalne #####
 
 a = 1 #wspolczynnik kierunkowy sciezki
