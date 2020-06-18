@@ -16,30 +16,31 @@ import matplotlib.pyplot as plt
 
 ##### Zmienne globalne #####
 
-a = 2 #wspolczynnik kierunkowy sciezki
-b = 10 #wyraz wolny
+##### Fragment dla użytkownika #####
+a = 1                       #wspolczynnik kierunkowy sciezki                                                                        liczba rzeczywista
+b = 1                       #wyraz wolny                                                                                            liczba rzeczywista
+x_size = 10                 #rozmiar sceny kwadratowej                                                                              liczba rzeczywista
+delta = 0.001               #najmniejsza dopuszczalna odległość między punktami                                                     liczba rzeczywista z zakresu 0 do 1, zalecana 0.001-0.1
+NoOfObstacles = 10          #liczba przeszkód okrągłych dla przypadku generacji automatycznej                                       liczba naturalna
+d_0 = 1                     #promien przeszkod okraglych                                                                            liczba rzeczywsita dodatnia
+r_path = 1                  #połowa szerokości ścieżki                                                                              liczba rzeczywista dodatnia
+iterations = 20000          #liczba generowanych pojedynczych punktow                                                               liczba naturalna, zalecana mniejsza niż 400000
+probability_of_path = 0.6   #o ile większe jest prawdopodobieństwo wystąpienia punktu na ścieżce niż na pustej przestrzeni          liczba rzeczywista z zakresu 0 do 1
+##### Koniec fragmentu dla użytkownika #####
 
-x_size = 10
-y_size = a*x_size    #rozmiar sceny
-if y_size < 2:
-    y_size=2
 
+y_size = x_size
 y_start=b
 y_end=b+y_size
+if a < 0:
+    y_start=b-y_size
+    y_end=b
 x_start=0
 x_end=x_size
-
-delta = 0.001        #najmniejsza dopuszczalna odległość między punktami
-
-NoOfObstacles = 4   #liczba przeszkód okrągłych
-
-d_0 = 1  # promien przeszkod okraglych
-r_path = 1 # połowa szerokości ścieżki
-
-probability_of_path = 0.8
-
 point_iters = 100
-iterations = 20000 #liczba generowanych pojedynczych punktow
+
+
+
 
 ##### Funkcje #####
 
@@ -66,7 +67,7 @@ def ValueInRange(Min, Value, Max):
         return True
     else:
         return False
-    
+
 def RandomObscaleCirc():
     #tworzy losową przeszkodę znajdującą się na ścieżce
     Obs_x=RandomCoordinate_x()
@@ -123,7 +124,7 @@ def MakePointInPath():
     x_point = RandomCoordinate_x()
     delta_point = ReturnRounded(np.random.uniform(-r_path, r_path))
     y_point = a * x_point + b + delta_point
-    if (y_point>=y_end or y_point<y_start):
+    if (y_point>y_end or y_point<y_start):
         return MakePointInPath()
     return (x_point, y_point)
 
@@ -161,17 +162,21 @@ def MakePointByProbability(ObstVector, VectorRect):
     else:
         return MakePointOutOfObscale(ObstVector, VectorRect)
 
+
 ##### main #####
 
-# tworzenie przeszkod
-#okraglych
-obst_vect = []
-for i in range(0, NoOfObstacles):
-    obst_vect.append(RandomObscaleCirc())
-
-#prostokatnych
-rect_vect = []
-#rect_vect.append((0, 15, 3, 20))
+##### Fragment dla użytkownika #####
+obst_vect = []                                  #wektor przeszkód okrągłych
+# for i in range(0, NoOfObstacles):             #dla generacji losowych przeszkód okrągłych
+#     obst_vect.append(RandomObscaleCirc())     #odkomentować te dwie linie kodu
+                                                #dodawanie przeszkód okrągłych ręcznie według wzoru:
+                                                #obst_vect.append((x,y))
+                                                #gdzie x - współrzędna horyzontalna środka przeszkody, y - współrzędna wertykalna środka przeszkody
+rect_vect = []                                  #wektor przeszkód prostokątnych
+                                                #dodawanie przeszkód prostokątnych ręcznie według wzoru:
+                                                #rect_vect.append((a, b, c, d))
+                                                #gdzie a i c to ograniczenia figury w współrzędnych horyzontalnych, natomiast b i d to ograniczenia figury w wpółrzędnych wertykalnych
+##### Koniec fragmentu dla użytkownika #####
 
 #generowanie punktow
 point_vect= []
